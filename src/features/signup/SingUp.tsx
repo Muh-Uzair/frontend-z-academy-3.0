@@ -64,6 +64,7 @@ const SignUp = () => {
   // Instructor Form
   const instructorForm = useForm<InstructorFormValues>({
     resolver: zodResolver(instructorFormSchema),
+
     defaultValues: {
       fullName: "",
       email: "",
