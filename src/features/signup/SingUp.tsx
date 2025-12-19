@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 // Student Form Schema
 const studentFormSchema = z.object({
@@ -50,8 +53,12 @@ const instructorFormSchema = z.object({
 type StudentFormValues = z.infer<typeof studentFormSchema>;
 type InstructorFormValues = z.infer<typeof instructorFormSchema>;
 
+// CMP CMP CMP
 const SignUp = () => {
-  // Student Form
+  // VARS
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const studentForm = useForm<StudentFormValues>({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
@@ -64,7 +71,6 @@ const SignUp = () => {
   // Instructor Form
   const instructorForm = useForm<InstructorFormValues>({
     resolver: zodResolver(instructorFormSchema),
-
     defaultValues: {
       fullName: "",
       email: "",
@@ -72,11 +78,13 @@ const SignUp = () => {
     },
   });
 
+  // FUNCTIONS
   async function onStudentSubmit(values: StudentFormValues) {
     console.log("Student Sign Up:", values);
 
     // Optional: Add a loading state if you're using it in a form (e.g., with react-hook-form)
     try {
+      setIsLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACK_END_URL}/auth/signup/student`,
         {
@@ -86,7 +94,7 @@ const SignUp = () => {
           },
           body: JSON.stringify({
             ...values,
-            role: "student", // explicitly set role if backend expects it
+            role: "student",
           }),
         },
       );
@@ -99,9 +107,13 @@ const SignUp = () => {
       }
 
       const data = await response.json();
+      toast.success("Event has been created");
       console.log("Signup successful:", data);
     } catch (error: unknown) {
       console.error("Error during student signup:", error);
+      toast.error("Error during student signup");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -110,6 +122,7 @@ const SignUp = () => {
     // TODO: API call to /api/auth/signup with role: "instructor"
   }
 
+  // JSX JSX JSX
   return (
     <div className="bg-background flex h-screen items-center justify-center">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -201,6 +214,7 @@ const SignUp = () => {
                       )}
                     />
                     <Button type="submit" className="w-full">
+                      {isLoading && <Spinner />}
                       Sign Up as Student
                     </Button>
                     <Button type="button" variant="outline" className="w-full">
@@ -212,9 +226,9 @@ const SignUp = () => {
               <CardFooter className="flex justify-center">
                 <p className="text-muted-foreground text-sm">
                   Already have an account?{" "}
-                  <a href="/signin" className="hover:text-primary underline">
+                  <Link href="/signin" className="hover:text-primary underline">
                     Sign In
-                  </a>
+                  </Link>
                 </p>
               </CardFooter>
             </Card>
@@ -304,9 +318,9 @@ const SignUp = () => {
               <CardFooter className="flex justify-center">
                 <p className="text-muted-foreground text-sm">
                   Already have an account?{" "}
-                  <a href="/signin" className="hover:text-primary underline">
+                  <Link href="/signin" className="hover:text-primary underline">
                     Sign In
-                  </a>
+                  </Link>
                 </p>
               </CardFooter>
             </Card>
