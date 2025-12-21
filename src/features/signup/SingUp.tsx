@@ -27,6 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 // Student Form Schema
 const studentFormSchema = z.object({
@@ -56,8 +57,8 @@ type InstructorFormValues = z.infer<typeof instructorFormSchema>;
 // CMP CMP CMP
 const SignUp = () => {
   // VARS
-
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const studentForm = useForm<StudentFormValues>({
     resolver: zodResolver(studentFormSchema),
@@ -108,6 +109,9 @@ const SignUp = () => {
 
       const data = await response.json();
       toast.success("Event has been created");
+      router.push(
+        `/verify-otp?email=${encodeURIComponent(values.email)}&role=${encodeURIComponent("student")}`,
+      );
       console.log("Signup successful:", data);
     } catch (error: unknown) {
       console.error("Error during student signup:", error);
