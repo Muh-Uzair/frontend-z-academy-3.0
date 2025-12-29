@@ -19,7 +19,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +28,7 @@ const VerifyOtp = () => {
   const email = searchParams.get("email");
   const role = searchParams.get("role");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   console.log(role);
 
@@ -59,6 +60,7 @@ const VerifyOtp = () => {
       const data = await response.json();
       toast.success("Email verified");
       console.log("Email verified:", data);
+      router.push("/signin");
     } catch (error: unknown) {
       console.error("Error during student signup:", error);
       toast.error("Error in email verification");
